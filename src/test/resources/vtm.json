@@ -1,0 +1,57 @@
+{
+	"_freebiePoints": 15,
+	"attributes": {
+		"_initialValue": 1,
+		"_xpCostInitial": -1,
+		"_xpCostNext": 4,
+		"_freebieCost": 5,
+		"_freeDots": [7, 5, 3]
+	},
+	"abilities": {
+		"_freebieCost": 2,
+		"_initialValue": 0,
+		"_xpCostInitial": 3,
+		"_xpCostNext": 2,
+		"_freeDots": [13, 9, 5]
+	},
+	"discipline": {
+		"inClan": {
+			"_xpCostNext": 5,
+			"_freeDots": 3,
+		},
+		"nonClan": {
+			"_xpCostNext": 7
+		},
+		"_freebieCost": 7,
+		"_initialValue": 0,
+		"_xpCostInitial": 10,
+	},
+	"advantages": {
+		"backgrounds": {
+			"_initialValue": 0,
+			"_xpCostInitial": -1,
+			"_xpCostNext": -1,
+			"_freebieCost": 1,
+			"_freeDots": 5
+		},
+		"virtues": {
+			"_initialValue": 1,
+			"_xpCostInitial": -1,
+			"_xpCostNext": 2,
+			"_freebieCost": 2,
+			"_freeDots": 7
+		},
+		"humanity": {
+			"_xpCostInitial": -1,
+			"_xpCostNext": 2,
+			"_freebieCost": 2,
+			"_initialValue": [ "advantages/virtues/conscience", "advantages/virtues/selfControl" ]
+		},
+		"willpower": {
+			"_xpCostInitial": -1,
+			"_xpCostNext": 1,
+			"_freebieCost": 1,
+			"_initialValue": [ "advantages/virtues/courage" ]
+		}
+	}
+}
