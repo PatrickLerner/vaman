@@ -295,6 +295,7 @@ public class CharacterSheet {
 	}
 
 	public String toString() {
+		int totalXP = this.getXPTotal();
 		StringBuilder sb = new StringBuilder();
 		
 		int sum = 0;
@@ -321,6 +322,10 @@ public class CharacterSheet {
 		for (Entry<String, Category> group : this.categories.entrySet()) {
 			sb.append(group.getValue().toString());
 		}
+		
+		sb.append("\ntotal: ");
+		sb.append(totalXP);
+		sb.append(" xp");
 		
 		return sb.toString();
 	}

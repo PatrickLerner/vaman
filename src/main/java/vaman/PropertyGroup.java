@@ -145,27 +145,28 @@ public class PropertyGroup extends AGrouping {
 
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		boolean headerPrinted = false;
+		
+		int totalXP = 0;
 		for (String property : this.properties.keySet()) {
 			for (int i = 1; i <= this.properties.get(property); i++) {
 				if (this.freePointSpending.containsKey(this.getTotalFreePoints())
 						&& this.freePointSpending.get(this.getTotalFreePoints()).get(property) < i) {
-					if (!headerPrinted) {
-						sb.append(this.getName());
-						sb.append("\n");
-						headerPrinted = true;
-					}
 					sb.append("\t");
 					sb.append(StringUtils.rightPad(property + " " + i, 20));
 					sb.append(" ");
+					int cost = 0;
 					if (i == 1)
-						sb.append(this.getXpCostInitial());
+						cost = this.getXpCostInitial();
 					else
-						sb.append(this.getXpCostNext() * (i - 1));
+						cost = this.getXpCostNext() * (i - 1);
+					totalXP += cost;
+					sb.append(cost);
 					sb.append(" xp\n");
 				}
 			}
 		}
+		if (sb.length() > 0)
+			sb.insert(0, this.getName() + " (" + totalXP + " xp)\n");
 		return sb.toString();
 	}
 }
