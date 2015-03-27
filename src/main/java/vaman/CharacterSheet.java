@@ -260,12 +260,8 @@ public class CharacterSheet {
 			}
 
 			int currentCost = 0;
-			//try {
-				for (Entry<String, Category> cat : this.categories.entrySet())
-					currentCost += cat.getValue().getCheapestXPCost();
-			//} catch (RuntimeException e) {
-				//currentCost = Integer.MAX_VALUE;
-			//}
+			for (Entry<String, Category> cat : this.categories.entrySet())
+				currentCost += cat.getValue().getCheapestXPCost();
 
 			if (currentCost < cheapestCost || cheapestPermutation == null) {
 				cheapestCost = currentCost;
