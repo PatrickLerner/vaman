@@ -3,30 +3,17 @@ package vaman;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 public class Category extends AGrouping {
-	private Map<String, AGrouping> groups;
-	//private Map<Integer, List<Integer>> freePointSpending;
-
-	public Category(Map<String, AGrouping> groups) {
-		this.groups = groups;
-		for (Entry<String, AGrouping> group : groups.entrySet())
-			group.getValue().setCategory(this);
-		//this.freePointSpending = new HashMap<Integer, List<Integer>>();
-	}
-
-	public Map<String, AGrouping> getGroups() {
-		return this.groups;
+	public Category() {
 	}
 
 	@Override
 	public int getTotalDots() {
 		int sum = 0;
-		for (Entry<String, AGrouping> group : this.groups.entrySet())
-			sum += group.getValue().getTotalDots();
+		for (AGrouping group : this.getSlaves())
+			sum += group.getTotalDots();
 		return sum;
 	}
 
@@ -49,11 +36,11 @@ public class Category extends AGrouping {
 	private Integer calculatePermutationCost(List<Integer> permutation) {
 		int sum = 0;
 		int i = 0;
-		for (Entry<String, AGrouping> group : this.groups.entrySet()) {
-			if (group.getValue().getTotalDots() < permutation.get(i) + group.getValue().getFreeInitialPoints()
-					+ group.getValue().getFreeFreebiePoints())
+		for (AGrouping group : this.getSlaves()) {
+			if (group.getTotalDots() < permutation.get(i) + group.getFreeInitialPoints()
+					+ group.getFreeFreebiePoints())
 				return null;
-			sum += group.getValue().getCheapestXPCostSpread(permutation.get(i));
+			sum += group.getCheapestXPCostSpread(permutation.get(i));
 			i += 1;
 		}
 		return sum;
@@ -64,14 +51,6 @@ public class Category extends AGrouping {
 		this.setFreeListPoints(additionalFreePoints);
 
 		if (this.getFreePointsList() != null && this.getFreePointsList().size() > 0) {
-			/*
-			if (this.freePointSpending.containsKey(this.getTotalFreePoints())) {
-				System.out.print(this.getName() + " ");
-				System.out.println(this.freePointSpending.get(this.getTotalFreePoints()));
-				return this.calculatePermutationCost(this.freePointSpending.get(this.getTotalFreePoints()));
-			}
-			*/
-
 			Set<List<Integer>> initialSet = new HashSet<List<Integer>>();
 			for (Integer val : this.getFreePointsList()) {
 				List<Integer> list = new LinkedList<Integer>();
@@ -93,23 +72,21 @@ public class Category extends AGrouping {
 			if (cheapestPermutation == null)
 				throw new RuntimeException("Could not find any way to spread out the free points to the groups");
 
-			//this.freePointSpending.put(this.getTotalFreePoints(), cheapestPermutation);
-
 			this.calculatePermutationCost(cheapestPermutation);
 			
 			return cheapestCost;
 		} else {
 			int sum = 0;
-			for (Entry<String, AGrouping> group : this.groups.entrySet())
-				sum += group.getValue().getCheapestXPCostSpread();
+			for (AGrouping group : this.getSlaves())
+				sum += group.getCheapestXPCostSpread();
 			return sum;
 		}
 	}
 
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		for (Entry<String, AGrouping> group : this.groups.entrySet())
-			sb.append(group.getValue().toString());
+		for (AGrouping group : this.getSlaves())
+			sb.append(group.toString());
 		return sb.toString();
 	}
 }

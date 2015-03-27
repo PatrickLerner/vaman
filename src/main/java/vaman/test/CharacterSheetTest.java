@@ -18,4 +18,10 @@ public class CharacterSheetTest {
 		CharacterSheet cs = new CharacterSheet("src/test/resources/stina_4dot.json");
 		assertEquals(6, cs.getXPTotal());
 	}
+	
+	@Test
+	public void testStinaVirtueIncreased() {
+		CharacterSheet cs = new CharacterSheet("src/test/resources/stinaMoreCouragous.json");
+		assertEquals(9, cs.getXPTotal());
+	}
 }

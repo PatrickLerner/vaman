@@ -3,7 +3,8 @@ package vaman.test;
 import static org.junit.Assert.*;
 
 import java.util.HashMap;
-import java.util.Map;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -19,17 +20,20 @@ public class CategoryTest {
 		phy.put("run", 4);
 		phy.put("jump", 2);
 		PropertyGroup phy_pg = new PropertyGroup(phy, 3);
+		phy_pg.setName("phy");
 		
 		HashMap<String, Integer> soc = new HashMap<String, Integer>();
 		soc.put("talk", 3);
 		soc.put("yell", 3);
 		PropertyGroup soc_pg = new PropertyGroup(soc, 3);
+		soc_pg.setName("soc");
 		
-		Map<String, AGrouping> pgs = new HashMap<String, AGrouping>();
-		pgs.put("phy", phy_pg);
-		pgs.put("soc", soc_pg);
+		List<AGrouping> pgs = new LinkedList<AGrouping>();
+		pgs.add(phy_pg);
+		pgs.add(soc_pg);
 		
-		Category att = new Category(pgs);
+		Category att = new Category();
+		att.addSlaves(pgs);
 		att.setXpCostInitial(3);
 		att.setXpCostNext(2);
 		

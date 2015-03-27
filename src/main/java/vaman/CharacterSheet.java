@@ -106,7 +106,7 @@ public class CharacterSheet {
 				if (this.categories.containsKey(cat))
 					cur_cat = this.categories.get(cat);
 				else {
-					cur_cat = new Category(new HashMap<String, AGrouping>());
+					cur_cat = new Category();
 					this.categories.put(cat, cur_cat);
 				}
 				cur_cat.setName(cat);
@@ -133,15 +133,16 @@ public class CharacterSheet {
 					}
 
 					PropertyGroup cur_grp;
-					if (cur_cat.getGroups().containsKey(grp)) {
-						cur_grp = (PropertyGroup) cur_cat.getGroups().get(grp);
+					if (cur_cat.getSlave(grp) != null) {
+						cur_grp = (PropertyGroup) cur_cat.getSlave(grp);
 						cur_grp.getProperties().putAll(properties);
 					}
 					else {
 						cur_grp = new PropertyGroup(properties);
-						cur_cat.getGroups().put(grp, cur_grp);
-						for (Entry<String, AGrouping> group : cur_cat.getGroups().entrySet())
-							group.getValue().setCategory(cur_cat);
+						cur_grp.setName(grp);
+						cur_cat.addSlave(cur_grp);
+						for (AGrouping group : cur_cat.getSlaves())
+							group.setMaster(cur_cat);
 					}
 					cur_grp.setName(grp);
 					this.parseParameters(grp_obj, cur_grp);
@@ -189,9 +190,9 @@ public class CharacterSheet {
 		
 		for (Map<AGrouping, Integer> perm : result) {
 			for (AGrouping pgroup : perm.keySet()) {
-				if (pgroup.getCategory().getFreePointsList() != null) {
+				if (pgroup.getMaster().getFreePointsList() != null) {
 					Map<Integer, Integer> spreadCount = new HashMap<Integer, Integer>();
-					List<Integer> spread = new LinkedList<Integer>(pgroup.getCategory().getFreePointsList());
+					List<Integer> spread = new LinkedList<Integer>(pgroup.getMaster().getFreePointsList());
 					Collections.sort(spread);
 					Collections.reverse(spread);
 					
@@ -201,13 +202,13 @@ public class CharacterSheet {
 						count += 1;
 					}
 					
-					for (Entry<String, AGrouping> g : pgroup.getCategory().getGroups().entrySet()) {
+					for (AGrouping g : pgroup.getMaster().getSlaves()) {
 						int permVal = 0;
-						if (perm.containsKey(g.getValue()))
-							permVal = perm.get(g.getValue());
+						if (perm.containsKey(g))
+							permVal = perm.get(g);
 						for (Integer sp : spreadCount.keySet()) {
-							int totalDots = g.getValue().getTotalDots();
-							int potentialFreeDots = sp + g.getValue().getFreeInitialPoints() + permVal;
+							int totalDots = g.getTotalDots();
+							int potentialFreeDots = sp + g.getFreeInitialPoints() + permVal;
 							if (totalDots >= potentialFreeDots)
 								spreadCount.put(sp, spreadCount.get(sp) - 1);
 						}
@@ -229,7 +230,7 @@ public class CharacterSheet {
 		Set<AGrouping> buyableGroups = new HashSet<AGrouping>();
 		for (AGrouping grouping : this.freebieBuyable) {
 			if (grouping instanceof Category)
-				buyableGroups.addAll(((Category) grouping).getGroups().values());
+				buyableGroups.addAll(((Category) grouping).getSlaves());
 			else
 				buyableGroups.add(grouping);
 		}
@@ -247,15 +248,6 @@ public class CharacterSheet {
 		Set<Map<AGrouping, Integer>> initialSet = new HashSet<Map<AGrouping, Integer>>();
 		initialSet.add(initial);
 		
-/*		for (Map<AGrouping, Integer> pos : this
-				.getPossibleFreebiePointSpreads(initialSet, buyableGroups, fbcount)) {
-			for (AGrouping g : pos.keySet()) {
-				System.out.print(g.getName() + " ");
-				System.out.print(pos.get(g) + " ");
-			}
-			System.out.println("");
-		}
-	*/	
 		Map<AGrouping, Integer> cheapestPermutation = null;
 		int cheapestCost = Integer.MAX_VALUE;
 		for (Map<AGrouping, Integer> pos : this

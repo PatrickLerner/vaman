@@ -1,6 +1,10 @@
 package vaman;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public abstract class AGrouping {
 	private Integer freeInitialPoints;
@@ -10,10 +14,11 @@ public abstract class AGrouping {
 	private Integer xpCostNext;
 	private Integer xpCostInitial;
 	private Integer initialValue;
-	private Category category;
 	private Integer freebieCost;
 	private Integer maxWithoutFreebie;
 	private String name;
+	private AGrouping master;
+	private Map<String, AGrouping> slaves;
 	
 	public abstract int getCheapestXPCostSpread(Integer additionalFreePoints);
 	
@@ -27,15 +32,44 @@ public abstract class AGrouping {
 		return this.getCheapestXPCostSpread(0);
 	}
 	
-	public void setCategory(Category category) {
-		this.category = category;
+	public void setMaster(AGrouping master) {
+		this.master = master;
+	}
+	
+	public AGrouping getMaster() {
+		return this.master;
+	}
+	
+	public Collection<AGrouping> getSlaves() {
+		if (this.slaves != null)
+			return this.slaves.values();
+		else
+			return new LinkedList<AGrouping>();
+	}
+	
+	public AGrouping getSlave(String group) {
+		if (this.slaves == null)
+			return null;
+		return this.slaves.get(group);
+	}
+	
+	public void addSlave(AGrouping slave) {
+		if (this.slaves == null)
+			this.slaves = new HashMap<String, AGrouping>();
+		this.slaves.put(slave.getName(), slave);
+		slave.setMaster(this);
+	}
+	
+	public void addSlaves(List<AGrouping> slaves) {
+		for (AGrouping slave : slaves)
+			this.addSlave(slave);
 	}
 	
 	public Integer getMaxWithoutFreebie() {
 		if (this.maxWithoutFreebie != null)
 			return maxWithoutFreebie;
-		if (this.category != null)
-			return this.category.getMaxWithoutFreebie();
+		if (this.master != null)
+			return this.master.getMaxWithoutFreebie();
 		return 0;
 	}
 
@@ -74,10 +108,6 @@ public abstract class AGrouping {
 				val = i;
 		return val;
 	}
-	
-	public Category getCategory() {
-		return category;
-	}
 
 	public void setFreePointsList(List<Integer> freePointsList) {
 		this.freePointsList = freePointsList;
@@ -86,8 +116,8 @@ public abstract class AGrouping {
 	public Integer getXpCostNext() {
 		if (this.xpCostNext != null)
 			return this.xpCostNext;
-		if (this.category != null)
-			return this.category.getXpCostNext();
+		if (this.master != null)
+			return this.master.getXpCostNext();
 		return 1;
 	}
 
@@ -98,8 +128,8 @@ public abstract class AGrouping {
 	public Integer getXpCostInitial() {
 		if (this.xpCostInitial != null)
 			return this.xpCostInitial;
-		if (this.category != null)
-			return this.category.getXpCostInitial();
+		if (this.master != null)
+			return this.master.getXpCostInitial();
 		return 1;
 	}
 
@@ -110,8 +140,8 @@ public abstract class AGrouping {
 	public Integer getInitialValue() {
 		if (this.initialValue != null)
 			return this.initialValue;
-		if (this.category != null)
-			return this.category.getInitialValue();
+		if (this.master != null)
+			return this.master.getInitialValue();
 		return 0;
 	}
 
@@ -122,8 +152,8 @@ public abstract class AGrouping {
 	public Integer getFreebieCost() {
 		if (this.freebieCost != null)
 			return this.freebieCost;
-		if (this.category != null)
-			return this.category.getFreebieCost();
+		if (this.master != null)
+			return this.master.getFreebieCost();
 		return -1;
 	}
 
