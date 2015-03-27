@@ -1,0 +1,109 @@
+{
+	"_base": "vtm",
+	"attributes": {
+		"physical": {
+			"strength": 1,
+			"dexterity": 3,
+			"stamina": 2
+		},
+		"social": {
+			"charisma": 3,
+			"manipulation": 3,
+			"appearance": 2
+		},
+		"mental": {
+			"perception": 4,
+			"intelligence": 3,
+			"wits": 3
+		}
+	},
+	"abilities": {
+		"talents": {
+			"alertness": 2,
+			"athletics": 0,
+			"awareness": 2,
+			"brawl": 0,
+			"empathy": 2,
+			"expression": 1,
+			"intimidation": 1,
+			"leadership": 0,
+			"streetwise": 2,
+			"subterfuge": 3
+		},
+		"skills": {
+			"animalKen": 0,
+			"crafts": 0,
+			"drive": 0,
+			"etiquette": 0,
+			"firearms": 0,
+			"larceny": 1,
+			"melee": 0,
+			"performance": 1,
+			"stealth": 2,
+			"survival": 1
+		},
+		"knowledges": {
+			"academics": 4,
+			"computer": 0,
+			"finance": 0,
+			"investigation": 4,
+			"law": 0,
+			"medicine": 1,
+			"occult": 1,
+			"politics": 1,
+			"science": 0,
+			"technology": 0
+		}
+	},
+	"discipline": {
+		"inClan": {
+			"auspex": 1,
+			"dominate": 0,
+			"obfuscate": 3
+		},
+		"nonClan": {
+			"animalism": 0,
+			"celerity": 0,
+			"chimistry": 0,
+			"dementation": 0,
+			"fortitude": 0,
+			"necromancy": 0,
+			"obtenebration": 0,
+			"potence": 0,
+			"presence": 0,
+			"quietus": 0,
+			"serpentis": 0,
+			"thaumaturgy": 0,
+			"vicissitude": 0
+		}
+	},
+	"advantages": {
+		"backgrounds": {
+			"allies": 0,
+			"alternativeIdentity": 0,
+			"blackHandMembership": 0,
+			"contacts": 5,
+			"domain": 0,
+			"fame": 0,
+			"generation": 1,
+			"herd": 0,
+			"influence": 0,
+			"mentor": 0,
+			"resources": 1,
+			"retainers": 0,
+			"ritual": 0,
+			"status": 1
+		},
+		"virtues": {
+			"conscience": 3,
+			"selfControl": 4,
+			"courage": 3
+		},
+		"humanity": {
+			"humanity": 7
+		},
+		"willpower": {
+			"willpower": 6
+		}
+	}
+}

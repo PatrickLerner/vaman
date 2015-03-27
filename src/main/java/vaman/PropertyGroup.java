@@ -68,8 +68,8 @@ public class PropertyGroup extends AGrouping {
 	public int getCheapestXPCostSpread(Integer additionalFreePoints) {
 		this.setFreeListPoints(additionalFreePoints);
 
-		if (this.freePointSpending.containsKey(this.getTotalFreePoints()))
-			return this.calculateRemainingXPCost(this.freePointSpending.get(this.getTotalFreePoints()));
+		//if (this.freePointSpending.containsKey(this.getTotalFreePoints()))
+		//	return this.calculateRemainingXPCost(this.freePointSpending.get(this.getTotalFreePoints()));
 
 		Map<String, Integer> cheapestPermutation = null;
 		int cheapestCost = 0;
@@ -82,7 +82,7 @@ public class PropertyGroup extends AGrouping {
 		}
 
 		this.freePointSpending.put(this.getTotalFreePoints(), cheapestPermutation);
-
+		
 		return cheapestCost;
 	}
 
@@ -108,7 +108,31 @@ public class PropertyGroup extends AGrouping {
 		basePermutationList.add(basePermutation);
 
 		// return all the possible ways to spend the free dots
-		return this.spendFreePoints(basePermutationList, this.getTotalFreePoints());
+		Set<Map<String, Integer>> poss = this.spendFreePoints(basePermutationList, this.getTotalFreePoints());
+		
+		// now filter out those that spend free initial points instead of freebie points
+		// above the limit if it exists
+		if (this.getMaxWithoutFreebie() > 0) {
+			Set<Map<String, Integer>> illegalPoss = new HashSet<Map<String, Integer>>();
+			
+			// find illegal possibilities
+			for (Map<String, Integer> p : poss) {
+				int sumAboveLimit = 0;
+				// count number of free dots assigned above limit
+				for (Integer i : p.values())
+					if (i > this.getMaxWithoutFreebie())
+						sumAboveLimit += i - this.getMaxWithoutFreebie();
+				// if too many are assigned above limit it's an illegal permutation
+				if (sumAboveLimit > this.getFreeFreebiePoints())
+					illegalPoss.add(p);
+			}
+			
+			// remove illegal possibilities
+			for (Map<String, Integer> ip : illegalPoss)
+				poss.remove(ip);
+		}
+		
+		return poss;
 	}
 
 	private Set<Map<String, Integer>> spendFreePoints(Set<Map<String, Integer>> permutations, int freePoints) {

@@ -10,6 +10,7 @@
 	"abilities": {
 		"_freebieCost": 2,
 		"_initialValue": 0,
+		"_maxWithoutFreebie": 3,
 		"_xpCostInitial": 3,
 		"_xpCostNext": 2,
 		"_freeDots": [13, 9, 5]

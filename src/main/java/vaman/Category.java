@@ -1,6 +1,5 @@
 package vaman;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -10,13 +9,13 @@ import java.util.Set;
 
 public class Category extends AGrouping {
 	private Map<String, AGrouping> groups;
-	private Map<Integer, List<Integer>> freePointSpending;
+	//private Map<Integer, List<Integer>> freePointSpending;
 
 	public Category(Map<String, AGrouping> groups) {
 		this.groups = groups;
 		for (Entry<String, AGrouping> group : groups.entrySet())
 			group.getValue().setCategory(this);
-		this.freePointSpending = new HashMap<Integer, List<Integer>>();
+		//this.freePointSpending = new HashMap<Integer, List<Integer>>();
 	}
 
 	public Map<String, AGrouping> getGroups() {
@@ -94,7 +93,7 @@ public class Category extends AGrouping {
 			if (cheapestPermutation == null)
 				throw new RuntimeException("Could not find any way to spread out the free points to the groups");
 
-			this.freePointSpending.put(this.getTotalFreePoints(), cheapestPermutation);
+			//this.freePointSpending.put(this.getTotalFreePoints(), cheapestPermutation);
 
 			this.calculatePermutationCost(cheapestPermutation);
 			

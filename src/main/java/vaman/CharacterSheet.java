@@ -63,6 +63,8 @@ public class CharacterSheet {
 			grouping.setXpCostInitial(((Long) obj.get("_xpCostInitial")).intValue());
 		if (obj.keySet().contains("_xpCostNext"))
 			grouping.setXpCostNext(((Long) obj.get("_xpCostNext")).intValue());
+		if (obj.keySet().contains("_maxWithoutFreebie"))
+			grouping.setMaxWithoutFreebie(((Long) obj.get("_maxWithoutFreebie")).intValue());
 		if (obj.keySet().contains("_freebieCost")) {
 			grouping.setFreebieCost(((Long) obj.get("_freebieCost")).intValue());
 			if (grouping.getFreebieCost() > 0)

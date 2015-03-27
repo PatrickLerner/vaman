@@ -8,10 +8,14 @@ import vaman.CharacterSheet;
 
 public class CharacterSheetTest {
 	@Test
-	public void testSimple() {
+	public void testStina() {
 		CharacterSheet cs = new CharacterSheet("src/test/resources/stina.json");
-		int total = cs.getXPTotal();
-		//System.out.println(cs.toString());
-		assertEquals(0, total);	
+		assertEquals(0, cs.getXPTotal());	
+	}
+
+	@Test
+	public void testStinaFourDot() {
+		CharacterSheet cs = new CharacterSheet("src/test/resources/stina_4dot.json");
+		assertEquals(6, cs.getXPTotal());
 	}
 }

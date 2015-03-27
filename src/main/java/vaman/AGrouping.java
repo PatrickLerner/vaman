@@ -12,6 +12,7 @@ public abstract class AGrouping {
 	private Integer initialValue;
 	private Category category;
 	private Integer freebieCost;
+	private Integer maxWithoutFreebie;
 	private String name;
 	
 	public abstract int getCheapestXPCostSpread(Integer additionalFreePoints);
@@ -28,6 +29,18 @@ public abstract class AGrouping {
 	
 	public void setCategory(Category category) {
 		this.category = category;
+	}
+	
+	public Integer getMaxWithoutFreebie() {
+		if (this.maxWithoutFreebie != null)
+			return maxWithoutFreebie;
+		if (this.category != null)
+			return this.category.getMaxWithoutFreebie();
+		return 0;
+	}
+
+	public void setMaxWithoutFreebie(Integer maxWithoutFreebie) {
+		this.maxWithoutFreebie = maxWithoutFreebie;
 	}
 	
 	public Integer getFreeInitialPoints() {

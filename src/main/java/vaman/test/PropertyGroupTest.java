@@ -34,4 +34,28 @@ public class PropertyGroupTest {
 		PropertyGroup pg = new PropertyGroup(test, 3, 10, 2, 1);
 		assertEquals(2, pg.getCheapestXPCostSpread());
 	}
+	
+	@Test
+	public void testSimpleFourthDot() {
+		HashMap<String, Integer> test = new HashMap<String, Integer>();
+		test.put("run", 4);
+		test.put("jump", 2);
+		PropertyGroup pg = new PropertyGroup(test, 4, 3, 2);
+		pg.setMaxWithoutFreebie(3);
+		assertEquals(8, pg.getCheapestXPCostSpread());
+	}
+	
+	@Test
+	public void testComplexFourthDot() {
+		HashMap<String, Integer> test = new HashMap<String, Integer>();
+		test.put("academics", 4);
+		test.put("investigation", 4);
+		test.put("medicine", 1);
+		test.put("occult", 1);
+		test.put("politics", 1);
+		PropertyGroup pg = new PropertyGroup(test, 9, 3, 2);
+		pg.setMaxWithoutFreebie(3);
+		pg.setFreeFreebiePoints(1);
+		assertEquals(6, pg.getCheapestXPCostSpread());
+	}
 }
