@@ -37,7 +37,7 @@ public class CategoryTest {
 		att.setXpCostInitial(3);
 		att.setXpCostNext(2);
 		
-		assertEquals(20, att.getCheapestXPCostSpread());
+		assertEquals(20, att.getCheapestXPCost());
 	}
 
 }

@@ -19,17 +19,15 @@ public abstract class AGrouping {
 	private String name;
 	private AGrouping master;
 	private Map<String, AGrouping> slaves;
+	private int cheapestXPCost;
+	private boolean recalculationNecessary = true;
 	
-	public abstract int getCheapestXPCostSpread(Integer additionalFreePoints);
+	protected abstract void recalculateXPCost();
 	
 	public abstract int getTotalDots();
 	
 	public int getTotalFreePoints() {
 		return this.getFreeInitialPoints() + this.getFreeListPoints() + this.getFreeFreebiePoints();
-	}
-	
-	public int getCheapestXPCostSpread() {
-		return this.getCheapestXPCostSpread(0);
 	}
 	
 	public void setMaster(AGrouping master) {
@@ -83,8 +81,11 @@ public abstract class AGrouping {
 		return 0;
 	}
 
-	public void setFreeInitialPoints(Integer freePoints) {
-		this.freeInitialPoints = freePoints;
+	public void setFreeInitialPoints(Integer freeInitialPoints) {
+		if (this.freeInitialPoints == freeInitialPoints)
+			return;
+		this.freeInitialPoints = freeInitialPoints;
+		this.setRecalculationNecessary(true);
 	}
 	
 	public Integer getFreeListPoints() {
@@ -94,7 +95,10 @@ public abstract class AGrouping {
 	}
 
 	public void setFreeListPoints(Integer freeListPoints) {
+		if (this.freeListPoints == freeListPoints)
+			return;
 		this.freeListPoints = freeListPoints;
+		this.setRecalculationNecessary(true);
 	}
 
 	public List<Integer> getFreePointsList() {
@@ -146,7 +150,10 @@ public abstract class AGrouping {
 	}
 
 	public void setInitialValue(Integer initialValue) {
+		if (this.initialValue == initialValue)
+			return;
 		this.initialValue = initialValue;
+		this.setRecalculationNecessary(true);
 	}
 
 	public Integer getFreebieCost() {
@@ -176,6 +183,31 @@ public abstract class AGrouping {
 	}
 
 	public void setFreeFreebiePoints(Integer freeFreebiePoints) {
+		if (this.freeFreebiePoints == freeFreebiePoints)
+			return;
 		this.freeFreebiePoints = freeFreebiePoints;
+		this.setRecalculationNecessary(true);
+	}
+
+	public int getCheapestXPCost() {
+		if (this.isRecalculationNecessary()) {
+			this.recalculateXPCost();
+			this.setRecalculationNecessary(false);
+		}
+		return cheapestXPCost;
+	}
+
+	protected void setCheapestXPCost(int cheapestXPCost) {
+		this.cheapestXPCost = cheapestXPCost;
+	}
+
+	protected boolean isRecalculationNecessary() {
+		return recalculationNecessary;
+	}
+	
+	protected void setRecalculationNecessary(boolean recalculationNecessary) {
+		this.recalculationNecessary = recalculationNecessary;
+		if (this.master != null)
+			this.master.setRecalculationNecessary(true);
 	}
 }

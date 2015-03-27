@@ -14,7 +14,7 @@ public class PropertyGroupTest {
 		test.put("run", 4);
 		test.put("jump", 2);
 		PropertyGroup pg = new PropertyGroup(test, 3, 3, 2);
-		assertEquals(11, pg.getCheapestXPCostSpread());
+		assertEquals(11, pg.getCheapestXPCost());
 	}
 	
 	@Test
@@ -23,7 +23,7 @@ public class PropertyGroupTest {
 		test.put("run", 4);
 		test.put("jump", 2);
 		PropertyGroup pg = new PropertyGroup(test, 3, 10, 2);
-		assertEquals(12, pg.getCheapestXPCostSpread());
+		assertEquals(12, pg.getCheapestXPCost());
 	}
 
 	@Test
@@ -32,7 +32,7 @@ public class PropertyGroupTest {
 		test.put("run", 4);
 		test.put("jump", 2);
 		PropertyGroup pg = new PropertyGroup(test, 3, 10, 2, 1);
-		assertEquals(2, pg.getCheapestXPCostSpread());
+		assertEquals(2, pg.getCheapestXPCost());
 	}
 	
 	@Test
@@ -42,7 +42,7 @@ public class PropertyGroupTest {
 		test.put("jump", 2);
 		PropertyGroup pg = new PropertyGroup(test, 4, 3, 2);
 		pg.setMaxWithoutFreebie(3);
-		assertEquals(8, pg.getCheapestXPCostSpread());
+		assertEquals(8, pg.getCheapestXPCost());
 	}
 	
 	@Test
@@ -56,6 +56,6 @@ public class PropertyGroupTest {
 		PropertyGroup pg = new PropertyGroup(test, 9, 3, 2);
 		pg.setMaxWithoutFreebie(3);
 		pg.setFreeFreebiePoints(1);
-		assertEquals(6, pg.getCheapestXPCostSpread());
+		assertEquals(6, pg.getCheapestXPCost());
 	}
 }

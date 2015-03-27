@@ -13,7 +13,7 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class PropertyGroup extends AGrouping {
 	private Map<String, Integer> properties;
-	private Map<Integer, Map<String, Integer>> freePointSpending;
+	private Map<String, Integer> freePointSpending;
 
 	public PropertyGroup(Map<String, Integer> properties, Integer freePoints, Integer xpCostInitial,
 			Integer xpCostNext, Integer initialValue) {
@@ -22,7 +22,7 @@ public class PropertyGroup extends AGrouping {
 		this.setXpCostInitial(xpCostInitial);
 		this.setXpCostNext(xpCostNext);
 		this.setInitialValue(initialValue);
-		this.freePointSpending = new HashMap<Integer, Map<String, Integer>>();
+		this.freePointSpending = new HashMap<String, Integer>();
 	}
 
 	public PropertyGroup(Map<String, Integer> properties, Integer freePoints, Integer xpCostInitial, Integer xpCostNext) {
@@ -64,13 +64,7 @@ public class PropertyGroup extends AGrouping {
 		return cost;
 	}
 
-	@Override
-	public int getCheapestXPCostSpread(Integer additionalFreePoints) {
-		this.setFreeListPoints(additionalFreePoints);
-
-		//if (this.freePointSpending.containsKey(this.getTotalFreePoints()))
-		//	return this.calculateRemainingXPCost(this.freePointSpending.get(this.getTotalFreePoints()));
-
+	protected void recalculateXPCost() {
 		Map<String, Integer> cheapestPermutation = null;
 		int cheapestCost = 0;
 		for (Map<String, Integer> permutation : this.getFreePointPermutations()) {
@@ -81,9 +75,8 @@ public class PropertyGroup extends AGrouping {
 			}
 		}
 
-		this.freePointSpending.put(this.getTotalFreePoints(), cheapestPermutation);
-		
-		return cheapestCost;
+		this.freePointSpending = cheapestPermutation;
+		this.setCheapestXPCost(cheapestCost);
 	}
 
 	public Map<String, Integer> getProperties() {
@@ -170,11 +163,12 @@ public class PropertyGroup extends AGrouping {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		
+		this.recalculateXPCost();
+		
 		int totalXP = 0;
 		for (String property : this.properties.keySet()) {
 			for (int i = 1; i <= this.properties.get(property); i++) {
-				if (this.freePointSpending.containsKey(this.getTotalFreePoints())
-						&& this.freePointSpending.get(this.getTotalFreePoints()).get(property) < i) {
+				if (this.freePointSpending.get(property) < i) {
 					sb.append("\t");
 					sb.append(StringUtils.rightPad(property + " " + i, 20));
 					sb.append(" ");

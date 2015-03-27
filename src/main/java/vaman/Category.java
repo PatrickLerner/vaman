@@ -40,16 +40,14 @@ public class Category extends AGrouping {
 			if (group.getTotalDots() < permutation.get(i) + group.getFreeInitialPoints()
 					+ group.getFreeFreebiePoints())
 				return null;
-			sum += group.getCheapestXPCostSpread(permutation.get(i));
+			group.setFreeListPoints(permutation.get(i));
+			sum += group.getCheapestXPCost();
 			i += 1;
 		}
 		return sum;
 	}
-
-	@Override
-	public int getCheapestXPCostSpread(Integer additionalFreePoints) {
-		this.setFreeListPoints(additionalFreePoints);
-
+	
+	protected void recalculateXPCost() {
 		if (this.getFreePointsList() != null && this.getFreePointsList().size() > 0) {
 			Set<List<Integer>> initialSet = new HashSet<List<Integer>>();
 			for (Integer val : this.getFreePointsList()) {
@@ -74,16 +72,21 @@ public class Category extends AGrouping {
 
 			this.calculatePermutationCost(cheapestPermutation);
 			
-			return cheapestCost;
+			this.setCheapestXPCost(cheapestCost);
 		} else {
 			int sum = 0;
-			for (AGrouping group : this.getSlaves())
-				sum += group.getCheapestXPCostSpread();
-			return sum;
+			for (AGrouping group : this.getSlaves()) {
+				group.setFreeListPoints(0);
+				sum += group.getCheapestXPCost();
+			}
+			
+			this.setCheapestXPCost(sum);
 		}
 	}
 
 	public String toString() {
+		this.recalculateXPCost();
+		
 		StringBuilder sb = new StringBuilder();
 		for (AGrouping group : this.getSlaves())
 			sb.append(group.toString());

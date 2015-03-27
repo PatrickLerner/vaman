@@ -262,7 +262,7 @@ public class CharacterSheet {
 			int currentCost = 0;
 			//try {
 				for (Entry<String, Category> cat : this.categories.entrySet())
-					currentCost += cat.getValue().getCheapestXPCostSpread();
+					currentCost += cat.getValue().getCheapestXPCost();
 			//} catch (RuntimeException e) {
 				//currentCost = Integer.MAX_VALUE;
 			//}
@@ -282,8 +282,10 @@ public class CharacterSheet {
 				group.setFreeFreebiePoints(0);
 		}
 
-		for (Entry<String, Category> cat : this.categories.entrySet())
-			cat.getValue().getCheapestXPCostSpread();
+		for (Entry<String, Category> cat : this.categories.entrySet()) {
+			cat.getValue().setFreeListPoints(0);
+			cat.getValue().getCheapestXPCost();
+		}
 
 		return cheapestCost;
 	}

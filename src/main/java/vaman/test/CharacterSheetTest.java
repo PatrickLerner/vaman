@@ -10,7 +10,8 @@ public class CharacterSheetTest {
 	@Test
 	public void testStina() {
 		CharacterSheet cs = new CharacterSheet("src/test/resources/stina.json");
-		assertEquals(0, cs.getXPTotal());	
+		System.out.println(cs.toString());
+		assertEquals(0, cs.getXPTotal());
 	}
 
 	@Test
