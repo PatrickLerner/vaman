@@ -37,6 +37,10 @@ public class PropertyGroup extends AGrouping {
 		this(properties, null, null, null, null);
 	}
 
+	public int getInitialFreePointSpend(String property) {
+		return 0;
+	}
+	
 	@Override
 	public int getTotalDots() {
 		int sum = 0;
@@ -61,6 +65,8 @@ public class PropertyGroup extends AGrouping {
 					throw new RuntimeException("Property " + this.getName() + " cannot be raised by experience points.");
 			}
 		}
+		for (AGrouping slave : this.getSlaves())
+			cost += slave.getCheapestXPCost();
 		return cost;
 	}
 

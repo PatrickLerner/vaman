@@ -32,14 +32,29 @@ public class CharacterSheet {
 		
 		for (Entry<AGrouping, List<String>> res : this.postLoadResolveValues.entrySet()) {
 			Long sum = (long) 0;
-			for (Object val : res.getValue()) {
-				String[] uri = ((String) val).split("/");
+			for (String val : res.getValue()) {
+				String[] uri = val.split("/");
 				JSONObject c = this.root;
 				for (int i = 0; i < uri.length - 1; i++)
 					c = (JSONObject) c.get(uri[i]);
 				sum += (Long) c.get(uri[uri.length - 1]);
 			}
-			res.getKey().setInitialValue(sum.intValue());
+			//res.getKey().setInitialValue(sum.intValue());
+			
+			List<String> dep = new LinkedList<String>();
+			for (String val : res.getValue()) {
+				String[] uri = val.split("/");
+				AGrouping c = this.categories.get(uri[0]);
+				for (int i = 1; i < uri.length - 1; i++)
+					c = c.getSlave(uri[i]);
+				c.addSlave(res.getKey());
+				dep.add(uri[uri.length - 1]);
+				if (res.getKey().getInitialValueDependencyGrouping() != null)
+					if (res.getKey().getInitialValueDependencyGrouping() != c)
+						throw new RuntimeException("Dependencies on multiple groups are not supported.");
+				res.getKey().setInitialValueDependencyGrouping(c);
+			}
+			res.getKey().setInitialValueDependencies(dep);
 		}
 	}
 

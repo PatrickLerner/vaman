@@ -14,6 +14,8 @@ public abstract class AGrouping {
 	private Integer xpCostNext;
 	private Integer xpCostInitial;
 	private Integer initialValue;
+	private List<String> initialValueDependencies;
+	private AGrouping initialValueDependencyGrouping;
 	private Integer freebieCost;
 	private Integer maxWithoutFreebie;
 	private String name;
@@ -31,6 +33,8 @@ public abstract class AGrouping {
 	}
 	
 	public void setMaster(AGrouping master) {
+		if (this.master != null)
+			this.master.removeSlave(this);
 		this.master = master;
 	}
 	
@@ -56,6 +60,11 @@ public abstract class AGrouping {
 			this.slaves = new HashMap<String, AGrouping>();
 		this.slaves.put(slave.getName(), slave);
 		slave.setMaster(this);
+	}
+	
+	public void removeSlave(AGrouping slave) {
+		if (this.slaves != null)
+			this.slaves.remove(slave);
 	}
 	
 	public void addSlaves(List<AGrouping> slaves) {
@@ -209,5 +218,21 @@ public abstract class AGrouping {
 		this.recalculationNecessary = recalculationNecessary;
 		if (this.master != null)
 			this.master.setRecalculationNecessary(true);
+	}
+
+	public List<String> getInitialValueDependencies() {
+		return initialValueDependencies;
+	}
+
+	public void setInitialValueDependencies(List<String> initialValueDependencies) {
+		this.initialValueDependencies = initialValueDependencies;
+	}
+
+	public AGrouping getInitialValueDependencyGrouping() {
+		return initialValueDependencyGrouping;
+	}
+
+	public void setInitialValueDependencyGrouping(AGrouping initialValueDependencyGrouping) {
+		this.initialValueDependencyGrouping = initialValueDependencyGrouping;
 	}
 }
