@@ -33,7 +33,7 @@ public abstract class AGrouping {
 	}
 	
 	public void setMaster(AGrouping master) {
-		if (this.master != null)
+		if (this.master != null && this.master != master)
 			this.master.removeSlave(this);
 		this.master = master;
 	}
@@ -64,7 +64,7 @@ public abstract class AGrouping {
 	
 	public void removeSlave(AGrouping slave) {
 		if (this.slaves != null)
-			this.slaves.remove(slave);
+			this.slaves.remove(slave.getName());
 	}
 	
 	public void addSlaves(List<AGrouping> slaves) {
@@ -81,7 +81,10 @@ public abstract class AGrouping {
 	}
 
 	public void setMaxWithoutFreebie(Integer maxWithoutFreebie) {
+		if (this.maxWithoutFreebie == maxWithoutFreebie)
+			return;
 		this.maxWithoutFreebie = maxWithoutFreebie;
+		this.setRecalculationNecessary(true);
 	}
 	
 	public Integer getFreeInitialPoints() {
@@ -112,14 +115,6 @@ public abstract class AGrouping {
 
 	public List<Integer> getFreePointsList() {
 		return this.freePointsList;
-	}
-	
-	public int getFreePointsListLargest() {
-		int val = this.freePointsList.get(0);
-		for (int i : this.freePointsList)
-			if (i > val)
-				val = i;
-		return val;
 	}
 
 	public void setFreePointsList(List<Integer> freePointsList) {
@@ -215,9 +210,16 @@ public abstract class AGrouping {
 	}
 	
 	protected void setRecalculationNecessary(boolean recalculationNecessary) {
-		this.recalculationNecessary = recalculationNecessary;
-		if (this.master != null)
-			this.master.setRecalculationNecessary(true);
+		if (recalculationNecessary && !this.recalculationNecessary) {
+			this.recalculationNecessary = true;
+			if (this.master != null && !this.master.isRecalculationNecessary())
+				this.master.setRecalculationNecessary(true);
+			for (AGrouping slave : this.getSlaves())
+				if (!slave.isRecalculationNecessary())
+					slave.setRecalculationNecessary(true);
+		}
+		else
+			this.recalculationNecessary = recalculationNecessary;
 	}
 
 	public List<String> getInitialValueDependencies() {

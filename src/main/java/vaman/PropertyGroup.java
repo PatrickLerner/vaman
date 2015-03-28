@@ -2,7 +2,9 @@ package vaman;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
@@ -36,10 +38,6 @@ public class PropertyGroup extends AGrouping {
 	public PropertyGroup(Map<String, Integer> properties) {
 		this(properties, null, null, null, null);
 	}
-
-	public int getInitialFreePointSpend(String property) {
-		return 0;
-	}
 	
 	@Override
 	public int getTotalDots() {
@@ -65,15 +63,38 @@ public class PropertyGroup extends AGrouping {
 					throw new RuntimeException("Property " + this.getName() + " cannot be raised by experience points.");
 			}
 		}
-		for (AGrouping slave : this.getSlaves())
+		for (AGrouping slave : this.getSlaves()) {
+			if (slave.getInitialValueDependencies() != null) {
+				int sum = 0;
+				for (String dep : slave.getInitialValueDependencies())
+					sum += permutation.get(dep);
+				slave.setInitialValue(sum);
+			}
 			cost += slave.getCheapestXPCost();
+		}
 		return cost;
+	}
+	
+	public int getMinimumSpreadOnDependencies(List<String> dependencies) {
+		Map<String, Integer> minimumPermutation = null;
+		int minimumValue = 0;
+		for (Map<String, Integer> permutation : this.getFreePointPermutations(this.getTotalFreePoints() - this.getFreeFreebiePoints())) {
+			int currentCost = 0;
+			for (Entry<String, Integer> prop : permutation.entrySet())
+				if (dependencies.contains(prop.getKey()))
+					currentCost += prop.getValue();
+			if (currentCost < minimumValue || minimumPermutation == null) {
+				minimumValue = currentCost;
+				minimumPermutation = permutation;
+			}
+		}
+		return minimumValue;
 	}
 
 	protected void recalculateXPCost() {
 		Map<String, Integer> cheapestPermutation = null;
 		int cheapestCost = 0;
-		for (Map<String, Integer> permutation : this.getFreePointPermutations()) {
+		for (Map<String, Integer> permutation : this.getFreePointPermutations(this.getTotalFreePoints())) {
 			int currentCost = this.calculateRemainingXPCost(permutation);
 			if (currentCost < cheapestCost || cheapestPermutation == null) {
 				cheapestCost = currentCost;
@@ -93,7 +114,7 @@ public class PropertyGroup extends AGrouping {
 		this.properties = properties;
 	}
 
-	private Set<Map<String, Integer>> getFreePointPermutations() {
+	private Set<Map<String, Integer>> getFreePointPermutations(int numberOfFreeDots) {
 		// create a base permutation, which is a map with all properties
 		// initialized to their
 		// start value (usually 0)
@@ -107,7 +128,7 @@ public class PropertyGroup extends AGrouping {
 		basePermutationList.add(basePermutation);
 
 		// return all the possible ways to spend the free dots
-		Set<Map<String, Integer>> poss = this.spendFreePoints(basePermutationList, this.getTotalFreePoints());
+		Set<Map<String, Integer>> poss = this.spendFreePoints(basePermutationList, numberOfFreeDots);
 		
 		// now filter out those that spend free initial points instead of freebie points
 		// above the limit if it exists
@@ -191,6 +212,9 @@ public class PropertyGroup extends AGrouping {
 		}
 		if (sb.length() > 0)
 			sb.insert(0, this.getName() + " (" + totalXP + " xp)\n");
+		
+		for (AGrouping group : this.getSlaves())
+			sb.append(group.toString());
 		return sb.toString();
 	}
 }

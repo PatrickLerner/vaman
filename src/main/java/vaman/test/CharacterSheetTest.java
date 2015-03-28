@@ -10,19 +10,19 @@ public class CharacterSheetTest {
 	@Test
 	public void testStina() {
 		CharacterSheet cs = new CharacterSheet("src/test/resources/stina.json");
-		System.out.println(cs.toString());
-		assertEquals(0, cs.getXPTotal());
+		assertEquals(0, cs.getCheapestXPCost());
 	}
 
 	@Test
 	public void testStinaFourDot() {
 		CharacterSheet cs = new CharacterSheet("src/test/resources/stina_4dot.json");
-		assertEquals(6, cs.getXPTotal());
+		assertEquals(6, cs.getCheapestXPCost());
 	}
 	
 	@Test
 	public void testStinaVirtueIncreased() {
 		CharacterSheet cs = new CharacterSheet("src/test/resources/stinaMoreCouragous.json");
-		assertEquals(9, cs.getXPTotal());
+		System.out.println(cs.toString());
+		assertEquals(9, cs.getCheapestXPCost());
 	}
 }

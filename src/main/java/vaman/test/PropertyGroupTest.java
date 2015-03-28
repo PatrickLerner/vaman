@@ -3,6 +3,9 @@ package vaman.test;
 import static org.junit.Assert.*;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.junit.Test;
 
 import vaman.PropertyGroup;
@@ -43,6 +46,29 @@ public class PropertyGroupTest {
 		PropertyGroup pg = new PropertyGroup(test, 4, 3, 2);
 		pg.setMaxWithoutFreebie(3);
 		assertEquals(8, pg.getCheapestXPCost());
+	}
+
+	@Test
+	public void testValueDependency() {
+		HashMap<String, Integer> test = new HashMap<String, Integer>();
+		test.put("run", 3);
+		test.put("jump", 2);
+		PropertyGroup pg = new PropertyGroup(test, 4, 3, 2);
+		pg.setName("pg");
+		
+		HashMap<String, Integer> test2 = new HashMap<String, Integer>();
+		test2.put("phy", 4);
+		PropertyGroup pg2 = new PropertyGroup(test2, 0, 10, 10);
+		
+		List<String> list = new LinkedList<String>();
+		list.add("jump");
+		pg2.setInitialValueDependencyGrouping(pg);
+		pg2.setInitialValueDependencies(list);
+		pg2.setName("pg2");
+		pg.addSlave(pg2);
+		
+		System.out.println(pg.toString());
+		assertEquals(54, pg.getCheapestXPCost());
 	}
 	
 	@Test

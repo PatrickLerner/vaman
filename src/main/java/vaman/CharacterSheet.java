@@ -16,38 +16,25 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
-public class CharacterSheet {
-	private Map<String, Category> categories;
+public class CharacterSheet extends AGrouping {
 	private Set<AGrouping> freebieBuyable;
 	private Integer freebiePoints;
 	private Map<AGrouping, Integer> freebiePointsSpending;
 	private Map<AGrouping, List<String>> postLoadResolveValues;
-	private JSONObject root;
 
 	public CharacterSheet(String fileName) {
-		this.categories = new HashMap<String, Category>();
 		this.freebieBuyable = new HashSet<AGrouping>();
 		this.postLoadResolveValues = new HashMap<AGrouping, List<String>>();
 		this.loadFromFile(fileName);
 		
-		for (Entry<AGrouping, List<String>> res : this.postLoadResolveValues.entrySet()) {
-			Long sum = (long) 0;
-			for (String val : res.getValue()) {
-				String[] uri = val.split("/");
-				JSONObject c = this.root;
-				for (int i = 0; i < uri.length - 1; i++)
-					c = (JSONObject) c.get(uri[i]);
-				sum += (Long) c.get(uri[uri.length - 1]);
-			}
-			//res.getKey().setInitialValue(sum.intValue());
-			
+		for (Entry<AGrouping, List<String>> res : this.postLoadResolveValues.entrySet()) {			
 			List<String> dep = new LinkedList<String>();
+			AGrouping c = null;
 			for (String val : res.getValue()) {
 				String[] uri = val.split("/");
-				AGrouping c = this.categories.get(uri[0]);
+				c = this.getSlave(uri[0]);
 				for (int i = 1; i < uri.length - 1; i++)
 					c = c.getSlave(uri[i]);
-				c.addSlave(res.getKey());
 				dep.add(uri[uri.length - 1]);
 				if (res.getKey().getInitialValueDependencyGrouping() != null)
 					if (res.getKey().getInitialValueDependencyGrouping() != c)
@@ -55,6 +42,8 @@ public class CharacterSheet {
 				res.getKey().setInitialValueDependencyGrouping(c);
 			}
 			res.getKey().setInitialValueDependencies(dep);
+			c.addSlave(res.getKey());
+			res.getKey().setInitialValue(((PropertyGroup) c).getMinimumSpreadOnDependencies(dep));
 		}
 	}
 
@@ -118,11 +107,12 @@ public class CharacterSheet {
 
 			for (String cat : catNames) {
 				Category cur_cat;
-				if (this.categories.containsKey(cat))
-					cur_cat = this.categories.get(cat);
+				if (this.getSlave(cat) != null)
+					cur_cat = (Category) this.getSlave(cat);
 				else {
 					cur_cat = new Category();
-					this.categories.put(cat, cur_cat);
+					cur_cat.setName(cat);
+					this.addSlave(cur_cat);
 				}
 				cur_cat.setName(cat);
 				
@@ -159,13 +149,13 @@ public class CharacterSheet {
 						for (AGrouping group : cur_cat.getSlaves())
 							group.setMaster(cur_cat);
 					}
-					cur_grp.setName(grp);
 					this.parseParameters(grp_obj, cur_grp);
+					cur_cat.addSlave(cur_grp);
 				}
 				
 				this.parseParameters(cat_obj, cur_cat);
+				this.addSlave(cur_cat);
 			}
-			this.root = cha_obj;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -181,6 +171,12 @@ public class CharacterSheet {
 		newRemainingGroupings.remove(group);
 
 		int maxValue = group.getTotalDots() - group.getFreeInitialPoints();
+		
+		/*if (group.getInitialValueDependencies() != null) {
+			PropertyGroup pg = (PropertyGroup) group.getMaster();
+			maxValue = group.getTotalDots();
+			maxValue -= pg.getMinimumSpreadOnDependencies(group.getInitialValueDependencies());
+		}*/
 
 		Set<Map<AGrouping, Integer>> result = new HashSet<Map<AGrouping, Integer>>(possibilities);
 		for (int i = 1; i <= maxValue; i++) {
@@ -240,8 +236,9 @@ public class CharacterSheet {
 		
 		return result;
 	}
-
-	public int getXPTotal() {
+	
+	@Override
+	protected void recalculateXPCost() {
 		Set<AGrouping> buyableGroups = new HashSet<AGrouping>();
 		for (AGrouping grouping : this.freebieBuyable) {
 			if (grouping instanceof Category)
@@ -267,6 +264,11 @@ public class CharacterSheet {
 		int cheapestCost = Integer.MAX_VALUE;
 		for (Map<AGrouping, Integer> pos : this
 				.getPossibleFreebiePointSpreads(initialSet, buyableGroups, fbcount)) {
+			
+			for (Entry<AGrouping, Integer> p : pos.entrySet())
+				System.out.print(p.getKey().getName() + " " + p.getValue() + "   ");
+			System.out.println("");
+			
 			for (AGrouping group : buyableGroups) {
 				if (pos.containsKey(group))
 					group.setFreeFreebiePoints(pos.get(group));
@@ -275,9 +277,11 @@ public class CharacterSheet {
 			}
 
 			int currentCost = 0;
-			for (Entry<String, Category> cat : this.categories.entrySet())
-				currentCost += cat.getValue().getCheapestXPCost();
-
+			try {
+			for (AGrouping cat : this.getSlaves())
+				currentCost += cat.getCheapestXPCost();
+			} catch (Exception e) { currentCost = Integer.MAX_VALUE; }
+			
 			if (currentCost < cheapestCost || cheapestPermutation == null) {
 				cheapestCost = currentCost;
 				cheapestPermutation = pos;
@@ -285,6 +289,7 @@ public class CharacterSheet {
 		}
 
 		this.freebiePointsSpending = cheapestPermutation;
+		this.setCheapestXPCost(cheapestCost);
 
 		for (AGrouping group : buyableGroups) {
 			if (this.freebiePointsSpending.containsKey(group))
@@ -293,16 +298,18 @@ public class CharacterSheet {
 				group.setFreeFreebiePoints(0);
 		}
 
-		for (Entry<String, Category> cat : this.categories.entrySet()) {
-			cat.getValue().setFreeListPoints(0);
-			cat.getValue().getCheapestXPCost();
+		for (AGrouping cat : this.getSlaves()) {
+			cat.recalculateXPCost();
+			cat.getCheapestXPCost();
 		}
 
-		return cheapestCost;
+		this.setCheapestXPCost(cheapestCost);
 	}
 
 	public String toString() {
-		int totalXP = this.getXPTotal();
+		this.setRecalculationNecessary(true);
+		this.recalculateXPCost();
+		
 		StringBuilder sb = new StringBuilder();
 		
 		int sum = 0;
@@ -326,14 +333,19 @@ public class CharacterSheet {
 		
 		sb.append("\n");
 		
-		for (Entry<String, Category> group : this.categories.entrySet()) {
-			sb.append(group.getValue().toString());
-		}
+		for (AGrouping group : this.getSlaves())
+			sb.append(group.toString());
 		
 		sb.append("\ntotal: ");
-		sb.append(totalXP);
+		sb.append(this.getCheapestXPCost());
 		sb.append(" xp");
 		
 		return sb.toString();
+	}
+
+	@Override
+	public int getTotalDots() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }
