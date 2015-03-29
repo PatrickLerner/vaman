@@ -1,7 +1,5 @@
 # VamAn
 
-<img src="https://raw.githubusercontent.com/PatrickLerner/vaman/master/etc/logo.png" align="right" style="padding-left: 0.7em; padding-bottom: 0.7em" />
-
 VamAn is a character sheet analyzer for the [Storyteller System](https://en.wikipedia.org/wiki/Storytelling_System) used by Onyx Path / White Wolf in their role playing games. Primarily the focus of this project is to automatically analyze character sheets for the Vampire: the Masquerade game in its 20th Anniversary edition, published in 2011. The modularity of the project should, however, hopefully help in expanding it into other game lines in the future.
 
 The analyzer requires a json file which describes how points are spend and what the conditions for spending points are (how many experience or freebie points per dot must be spend). A simple example for how this file should look can be seen in the character sheet for a character named ['Stina'](https://github.com/PatrickLerner/vaman/blob/master/src/test/resources/stina.json) (created by a guy named Mads Madsen, used without permission) in the resources directory. The assignment for the points should be fairly obvious and can be edited with a normal text editor.
