@@ -127,6 +127,7 @@ public class PropertyGroup extends AGrouping {
 
 		this.freePointSpending = cheapestPermutation;
 		this.setCheapestXPCost(cheapestCost);
+		this.setRecalculationNecessary(false);
 	}
 
 	public Map<String, Integer> getProperties() {
@@ -211,9 +212,12 @@ public class PropertyGroup extends AGrouping {
 	}
 
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
+		if (this.isRecalculationNecessary()) {
+			this.recalculateXPCost();
+			this.setRecalculationNecessary(false);
+		}
 		
-		this.recalculateXPCost();
+		StringBuilder sb = new StringBuilder();
 		
 		int totalXP = 0;
 		for (String property : this.properties.keySet()) {

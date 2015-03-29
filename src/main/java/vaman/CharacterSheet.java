@@ -302,13 +302,16 @@ public class CharacterSheet extends AGrouping {
 			cat.recalculateXPCost();
 			cat.getCheapestXPCost();
 		}
+		this.setRecalculationNecessary(false);
 
 		this.setCheapestXPCost(cheapestCost);
 	}
 
 	public String toString() {
-		this.setRecalculationNecessary(true);
-		this.recalculateXPCost();
+		if (this.isRecalculationNecessary()) {
+			this.recalculateXPCost();
+			this.setRecalculationNecessary(false);
+		}
 		
 		StringBuilder sb = new StringBuilder();
 		
