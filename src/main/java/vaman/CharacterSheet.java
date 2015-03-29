@@ -265,9 +265,9 @@ public class CharacterSheet extends AGrouping {
 		for (Map<AGrouping, Integer> pos : this
 				.getPossibleFreebiePointSpreads(initialSet, buyableGroups, fbcount)) {
 			
-			for (Entry<AGrouping, Integer> p : pos.entrySet())
-				System.out.print(p.getKey().getName() + " " + p.getValue() + "   ");
-			System.out.println("");
+			//for (Entry<AGrouping, Integer> p : pos.entrySet())
+			//	System.out.print(p.getKey().getName() + " " + p.getValue() + "   ");
+			//System.out.println("");
 			
 			for (AGrouping group : buyableGroups) {
 				if (pos.containsKey(group))

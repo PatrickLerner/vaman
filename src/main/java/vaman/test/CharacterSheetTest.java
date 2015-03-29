@@ -22,7 +22,6 @@ public class CharacterSheetTest {
 	@Test
 	public void testStinaVirtueIncreased() {
 		CharacterSheet cs = new CharacterSheet("src/test/resources/stinaMoreCouragous.json");
-		System.out.println(cs.toString());
 		assertEquals(9, cs.getCheapestXPCost());
 	}
 }

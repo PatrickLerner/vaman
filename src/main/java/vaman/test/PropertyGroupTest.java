@@ -67,7 +67,6 @@ public class PropertyGroupTest {
 		pg2.setName("pg2");
 		pg.addSlave(pg2);
 		
-		System.out.println(pg.toString());
 		assertEquals(54, pg.getCheapestXPCost());
 	}
 	
